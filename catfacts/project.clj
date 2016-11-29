@@ -36,7 +36,9 @@
                               :output-dir    "target/out"
                               :target        :nodejs
                               :optimizations :none
-                              :source-map    true}}}}
+                              :pretty-print  true
+                              :source-map    true
+                              :source-map-timestamp true}}}}
     :figwheel
     {:http-server-root "public"
      :nrepl-port 7000
@@ -61,7 +63,7 @@
             ["clean"]
             ["npm" "install"]
             ["figwheel" "dev"]]
-   "release" ["do"
+   "package" ["do"
               ["clean"]
               ["npm" "install"]
               ["npm" "init" "-y"]
