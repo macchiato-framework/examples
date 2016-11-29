@@ -5,6 +5,7 @@
                  [hiccups "0.3.0"]
                  [funcool/promesa "1.6.0"]
                  [macchiato/http "0.0.4"]
+                 [macchiato/response "0.0.1"]
                  [mount "0.1.10"]
                  [org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.293"]

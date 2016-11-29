@@ -2,6 +2,7 @@
   (:require
     [bidi.bidi :as bidi]
     [cljs.reader :as reader]
+    [macchiato.response :refer [header not-found ok]]
     [mount.core :refer [defstate]]))
 
 (defstate fs :start (js/require "fs"))
@@ -20,11 +21,11 @@
         facts     {:facts      fact-data
                    :fact-count (count fact-data)}]
     (fn [_ res]
-      (res
-        {:headers {"Content-Type" "application/javascript"}
-         :status  200
-         :body    {:response_type "in_channel"
-                   :text          (catfact facts)}}))))
+      (-> {:response_type "in_channel"
+           :text          (catfact facts)}
+          (ok)
+          (header "Content-Type" "application/javascript")
+          (res)))))
 
 (defn http-get [uri callback]
   (@http-client
@@ -36,25 +37,19 @@
 (defn gif-handler [_ res]
   (http-get "http://thecatapi.com/api/images/get?format=src&type=gif"
     (fn [_ response _]
-      (res
-        {:headers {"Content-Type" "application/javascript"}
-         :status  200
-         :body    {:response_type "in_channel"
-                   :attachments
-                   [{:fallback  "Cat Gif."
-                     :image_url (some-> response .-request .-uri .-href)}]}}))))
+      (-> {:response_type "in_channel"
+           :attachments
+                          [{:fallback  "Cat Gif."
+                            :image_url (some-> response .-request .-uri .-href)}]}
+          (ok)
+          (header "Content-Type" "application/javascript")
+          (res)))))
 
 (defn home-handler [_ res]
-  (res
-    {:headers {}
-     :status  200
-     :body    "Welcome to Catfacts"}))
+  (-> "Welcome to Catfacts" ok res))
 
 (defn not-found-handler [req res]
-  (res
-    {:headers {}
-     :status  404
-     :body    (str "route " (-> req :user-agent) " was not found!")}))
+  (-> (str "route " (-> req :user-agent) " was not found!") not-found res))
 
 (defn routes []
   ["/"
