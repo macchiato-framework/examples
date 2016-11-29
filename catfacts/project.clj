@@ -3,13 +3,11 @@
   :url "https://github.com/macchiato-framework/macchiato/tree/master/examples/catfacts-macchiato"
   :dependencies [[bidi "2.0.14"]
                  [hiccups "0.3.0"]
-                 [funcool/promesa "1.6.0"]
-                 [macchiato/http "0.0.4"]
+                 [macchiato/http "0.0.5"]
                  [macchiato/response "0.0.1"]
                  [mount "0.1.10"]
                  [org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.293"]
-                 [org.clojure/data.json "0.2.6" :classifier "aot"]
                  [com.taoensso/timbre "4.7.4"]
                  [com.cemerick/piggieback "0.2.1"]
                  [org.clojure/tools.nrepl "0.2.10"]
@@ -39,7 +37,7 @@
                               :optimizations :none
                               :pretty-print  true
                               :source-map    true
-                              :source-map-timestamp true}}}}
+                              :source-map-timestamp false}}}}
     :figwheel
     {:http-server-root "public"
      :nrepl-port 7000

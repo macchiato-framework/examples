@@ -13,7 +13,7 @@
         port   (or (.-PORT (.-env js/process)) 3000)]
     (mount/start)
     (-> @http
-          (.createServer (handler router))
+          (.createServer (handler router {:cookies {:signed? false}}))
           (.listen port host #(info "started on" host ":" port)))))
 
 (defn start-workers [cluster]
