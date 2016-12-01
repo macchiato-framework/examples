@@ -24,7 +24,7 @@
       (-> {:response_type "in_channel"
            :text          (catfact facts)}
           (ok)
-          (header "Content-Type" "application/javascript")
+          (header "Content-Type" "application/json")
           (res)))))
 
 (defn http-get [uri callback]
@@ -42,7 +42,7 @@
                           [{:fallback  "Cat Gif."
                             :image_url (some-> response .-request .-uri .-href)}]}
           (ok)
-          (header "Content-Type" "application/javascript")
+          (header "Content-Type" "application/json")
           (res)))))
 
 (defn home-handler [_ res]
