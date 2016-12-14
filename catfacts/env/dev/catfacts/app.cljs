@@ -2,8 +2,7 @@
   (:require
     [catfacts.core :as core]
     [cljs.nodejs]
-    [mount.core :as mount]
-    [taoensso.timbre :refer-macros [error]]))
+    [mount.core :as mount]))
 
 (mount/in-cljc-mode)
 

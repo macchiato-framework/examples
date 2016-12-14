@@ -1,31 +1,33 @@
 (ns catfacts.core
   (:require
-    [catfacts.middleware :refer [wrap-error]]
+    [catfacts.config :refer [env]]
+    [catfacts.middleware :refer [wrap-defaults]]
     [catfacts.routes :refer [router]]
-    [macchiato.http :refer [handler]]
+    [macchiato.server :as http]
+    [macchiato.session.memory :as mem]
     [mount.core :as mount :refer [defstate]]
     [taoensso.timbre :refer-macros [log trace debug info warn error fatal]]))
 
-(defstate http :start (js/require "http"))
-
 (defn app []
-  (let [host   (or (.-HOST (.-env js/process)) "127.0.0.1")
-        port   (or (.-PORT (.-env js/process)) 3000)]
-    (mount/start)
-    (-> @http
-          (.createServer (handler router {:cookies {:signed? false}}))
-          (.listen port host #(info "started on" host ":" port)))))
+  (mount/start)
+  (let [host (or (:host @env) "127.0.0.1")
+        port (or (some-> @env :port js/parseInt) 3001)]
+    (http/start
+      {:handler    (wrap-defaults router)
+       :host       host
+       :port       port
+       :on-success #(info "catfacts started on" host ":" port)})))
 
-(defn start-workers [cluster]
-  (dotimes [_ (-> (js/require "os") .cpus .-length)]
+(defn start-workers [os cluster]
+  (dotimes [_ (-> os .cpus .-length)]
     (.fork cluster))
   (.on cluster "exit"
        (fn [worker code signal]
          (info "worker terminated" (-> worker .-process .-pid)))))
 
 (defn main [& args]
-  (let [cluster (js/require "cluster")]
+  (let [os      (js/require "os")
+        cluster (js/require "cluster")]
     (if (.-isMaster cluster)
-      (start-workers cluster)
+      (start-workers os cluster)
       (app))))
-

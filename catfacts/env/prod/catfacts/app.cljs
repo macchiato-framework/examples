@@ -1,8 +1,8 @@
  (ns catfacts.app
-   (:require
-     [catfacts.core :as core]
-     [cljs.nodejs]
-     [mount.core :as mount]))
+  (:require
+    [catfacts.core :as core]
+    [cljs.nodejs]
+    [mount.core :as mount]))
 
 (mount/in-cljc-mode)
 
