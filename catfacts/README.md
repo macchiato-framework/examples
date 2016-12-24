@@ -7,14 +7,14 @@
 ### running in development mode
 
 ```
-  cd catfacts-macchiato
+  cd catfacts
   lein build
 ```
 
 then in another terminal
 
 ```
-  cd catfacts-macchiato
+  cd catfacts
   node target/out/catfacts.js
 ```
 
