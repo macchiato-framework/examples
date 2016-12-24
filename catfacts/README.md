@@ -20,7 +20,7 @@ then in another terminal
 
 #### configuring the REPL
 
-Once Figwheel and node are running, you can connect to the remote REPL at `localhost:7000`.
+Once Figwheel and node are running, you can connect to the remote REPL at `localhost:3001`.
 Type `(cljs)` in the REPL to connect to Figwheel ClojureSrcipt REPL.
 
 
