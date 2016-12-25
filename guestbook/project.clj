@@ -7,7 +7,6 @@
                  [macchiato/core "0.1.0"]
                  [macchiato/defaults "0.0.3"]
                  [macchiato/env "0.0.3"]
-                 [macchiato/futures "0.0.3-SNAPSHOT"]
                  [macchiato/sql "0.0.1"]
                  [mount "0.1.10"]
                  [org.clojure/clojure "1.8.0"]
@@ -19,7 +18,8 @@
             [lein-cljsbuild "1.1.4"]
   [org.clojure/clojurescript "1.9.293"]]
   :npm {:dependencies [[source-map-support "0.4.6"]
-                       [sqlite3 "3.1.8"]]}
+                       [sqlite3 "3.1.8"]
+                       [synchronize "2.0.0"]]}
   :source-paths ["src" "target/classes"]
   :clean-targets ["target"]
   :target-path "target"
@@ -35,7 +35,8 @@
                               :target        :nodejs
                               :optimizations :none
                               :pretty-print  true
-                              :source-map    true}}}}
+                              :source-map    true
+                              :source-map-timestamp false}}}}
     :figwheel
     {:http-server-root "public"
      :nrepl-port 7000

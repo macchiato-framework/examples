@@ -1,8 +1,9 @@
 (ns guestbook.db
   (:require
     [cljs.nodejs :as node]
-    [macchiato.futures.core :refer [task wait wrap-future]]
     [mount.core :refer [defstate]]))
+
+(def sync (node/require "synchronize"))
 
 (def sqlite3 (node/require "sqlite3"))
 
@@ -17,11 +18,11 @@
                           time TIMESTAMP DEFAULT CURRENT_TIMESTAMP);"))
   :stop (.close @db))
 
-
 (defn add-message [{:keys [name message]}]
   (.run @db "INSERT INTO guestbook (name, message) VALUES (?, ?)" #js [name message]))
 
-(defn messages [res]
-  (.all @db "SELECT * FROM guestbook"
-        (fn [err rows]
-          (res (js->clj rows :keywordize-keys true)))))
+(defn messages []
+  (-> @db
+      (.all "SELECT * FROM guestbook" (sync.defer))
+      (sync.await)
+      (js->clj :keywordize-keys true)))
