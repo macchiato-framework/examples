@@ -1,8 +1,6 @@
 (ns guestbook.middleware
   (:require
-    [macchiato.defaults :as defaults]))
+   [macchiato.middleware.defaults :as defaults]))
 
 (defn wrap-defaults [handler]
   (defaults/wrap-defaults handler defaults/site-defaults))
-
-

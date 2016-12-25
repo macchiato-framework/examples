@@ -1,6 +1,6 @@
 (ns file-upload.middleware
   (:require
-    [macchiato.defaults :as defaults]))
+   [macchiato.middleware.defaults :as defaults]))
 
 (defn wrap-defaults [handler]
   (defaults/wrap-defaults
@@ -8,5 +8,3 @@
     (-> defaults/site-defaults
         (assoc-in [:static :resources] "public")
         (assoc-in [:params :multipart] {:upload-dir "public/files"}))))
-
-
