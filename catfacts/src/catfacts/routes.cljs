@@ -63,13 +63,19 @@
       (r/content-type "text/html")
       (res)))
 
+(def routes
+  ["/" {:get home}])
+
 (defn routes []
-  ["/"
-   [["" home]
+  [""
+   {:get {"/" home
+          "/fact" (fact)
+          "/gif"  gif}}
+   #_[["" ]
     ["fact" (fact)]
     ["gif" gif]
     [true not-found]]])
 
 (defn router [req res raise]
-  (let [route (->> req :uri (bidi/match-route (routes)) :handler)]
-    (route req res raise)))
+  ((:handler (bidi/match-route* routes (:uri req) req) not-found)
+    req res raise))
