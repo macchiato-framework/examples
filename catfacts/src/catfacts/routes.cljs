@@ -39,8 +39,8 @@
             (fn [_ response _]
               (-> {:response_type "in_channel"
                    :attachments
-                   [{:fallback  "Cat Gif."
-                     :image_url (some-> response .-request .-uri .-href)}]}
+                                  [{:fallback  "Cat Gif."
+                                    :image_url (some-> response .-request .-uri .-href)}]}
                   (r/ok)
                   (r/header "Content-Type" "application/json")
                   (res)))))
@@ -63,19 +63,11 @@
       (r/content-type "text/html")
       (res)))
 
-(def routes
-  ["/" {:get home}])
-
 (defn routes []
-  [""
-   {:get {"/" home
-          "/fact" (fact)
-          "/gif"  gif}}
-   #_[["" ]
-    ["fact" (fact)]
-    ["gif" gif]
-    [true not-found]]])
+  ["/" {""     {:get home}
+        "gif"  {:get gif}
+        "fact" {:get (fact)}}])
 
 (defn router [req res raise]
-  ((:handler (bidi/match-route* routes (:uri req) req) not-found)
+  ((:handler (bidi/match-route* (routes) (:uri req) req) not-found)
     req res raise))

@@ -15,29 +15,29 @@
 
 (defn home [req res raise]
   (-> (html
-       [:html
-        [:body
-         [:h2 "Upload a File"]
-         [:form
-          {:action  "/file"
-           :method  "post"
-           :enctype "multipart/form-data"}
-          [:input
-           {:type  "hidden"
-            :name  "__anti-forgery-token"
-            :value af/*anti-forgery-token*}]
-          [:input
-           {:type  "file"
-            :name  "upload"
-            :value "upload"}]
-          [:input
-           {:type  "submit"
-            :value "submit"}]]
-         [:hr]
-         [:h2 "Uploaded Files"]
-         [:ul
-          (for [file (list-uploaded-files)]
-           [:li [:a {:href (str "files/" file)} file]])]]])
+        [:html
+         [:body
+          [:h2 "Upload a File"]
+          [:form
+           {:action  "/file"
+            :method  "post"
+            :enctype "multipart/form-data"}
+           [:input
+            {:type  "hidden"
+             :name  "__anti-forgery-token"
+             :value af/*anti-forgery-token*}]
+           [:input
+            {:type  "file"
+             :name  "upload"
+             :value "upload"}]
+           [:input
+            {:type  "submit"
+             :value "submit"}]]
+          [:hr]
+          [:h2 "Uploaded Files"]
+          [:ul
+           (for [file (list-uploaded-files)]
+             [:li [:a {:href (str "files/" file)} file]])]]])
       (r/ok)
       (r/content-type "text/html")
       (res)))
@@ -57,11 +57,9 @@
   (res (r/found "/")))
 
 (def routes
-  ["/"
-   [["" home]
-    ["file" upload-file]
-    [true not-found]]])
+  ["/" {""     {:get home}
+        "file" {:post upload-file}}])
 
 (defn router [req res raise]
-  (let [route (->> req :uri (bidi/match-route routes) :handler)]
-    (route req res raise)))
+  ((:handler (bidi/match-route* routes (:uri req) req) not-found)
+    req res raise))
