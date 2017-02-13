@@ -1,7 +1,7 @@
 (defproject auth-example "0.1.0-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
-  :dependencies [[bidi "2.0.16"]
+  :dependencies [[darkleaf/router "0.2.1"]
                  [com.taoensso/timbre "4.8.0"]
                  [hiccups "0.3.0"]
                  [macchiato/auth "0.0.1"]
@@ -14,8 +14,7 @@
   :plugins [[lein-doo "0.1.7"]
             [lein-npm "0.6.2"]
             [lein-figwheel "0.5.8"]
-            [lein-cljsbuild "1.1.4"]
-  [org.clojure/clojurescript "1.9.293"]]
+            [lein-cljsbuild "1.1.4"]]
   :npm {:dependencies [[source-map-support "0.4.6"]]}
   :source-paths ["src" "target/classes"]
   :clean-targets ["target"]

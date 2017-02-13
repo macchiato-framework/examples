@@ -1,11 +1,11 @@
 (ns auth-example.routes
   (:require
-    [bidi.bidi :as bidi]
-    [hiccups.runtime]
-    [macchiato.middleware.anti-forgery :as af]
-    [macchiato.util.response :as r])
+   [darkleaf.router :as router]
+   [hiccups.runtime]
+   [macchiato.middleware.anti-forgery :as af]
+   [macchiato.util.response :as r])
   (:require-macros
-    [hiccups.core :refer [html]]))
+   [hiccups.core :refer [html]]))
 
 (defn logged-in? [{:keys [identity]}]
   (boolean identity))
@@ -15,7 +15,7 @@
    [:h3 "Please login"]
    [:form
     {:method "POST"
-     :action "/login"}
+     :action "/session"}
     [:input
      {:type  :hidden
       :name  "__anti-forgery-token"
@@ -35,45 +35,50 @@
 (defn logout-form [{:keys [identity]}]
   [:div
    [:h3 "Welcome " (:name identity)]
-   [:a {:href "/logout"} "logout"]])
+   [:form
+    {:method "POST"
+     :action "/session"}
+    [:input
+     {:type  :hidden
+      :name  "__anti-forgery-token"
+      :value af/*anti-forgery-token*}]
+    [:input
+     {:type  :hidden
+      :name  "_method"
+      :value "delete"}]
+    [:input
+     {:type  :submit
+      :value "logout"}]]])
 
-(defn home [req res raise]
-  (-> (html
-        [:html
-         [:body
-          (if (logged-in? req)
-            (logout-form req)
-            (login-form))]])
-      (r/ok)
-      (r/content-type "text/html")
-      (res)))
+(defn home-view [ctx]
+  (html
+   [:html
+    [:body
+     (if (logged-in? ctx)
+       (logout-form ctx)
+       (login-form))]]))
 
-(defn not-found [req res raise]
-  (-> (html
-        [:html
-         [:body
-          [:h2 (:uri req) " was not found"]]])
-      (r/not-found)
-      (r/content-type "text/html")
-      (res)))
+(def home-controller
+  {:show (fn [req res raise]
+           (-> req
+               (home-view)
+               (r/ok)
+               (r/content-type "text/html")
+               (res)))})
 
-(defn login [req res raise]
-  (println (:params req))
-  (-> (r/found "/")
-      (assoc-in [:session :identity :name] (-> req :params :name))
-      (res)))
-
-(defn logout [req res raise]
-  (-> (r/found "/")
-      (update :session dissoc :identity)
-      (res)))
+(def session-controller
+  {:create (fn [req res raiss]
+             (-> (r/found "/")
+                 (assoc-in [:session :identity :name] (-> req :params :name))
+                 (res)))
+   :destroy (fn [req res raise]
+              (-> (r/found "/")
+                  (update :session dissoc :identity)
+                  (res)))})
 
 (def routes
-  ["/" {""       {:get home}
-        "login"  {:post login}
-        "logout" {:get logout}}])
+  (router/composite
+   (router/resource :home home-controller, :segment false)
+   (router/resource :session session-controller)))
 
-(defn router [req res raise]
-  (if-let [{:keys [handler route-params]} (bidi/match-route* routes (:uri req) req)]
-    (handler (assoc req :route-params route-params) res raise)
-    (not-found req res raise)))
+(def handler (router/make-handler routes))

@@ -2,7 +2,7 @@
   (:require
     [auth-example.config :refer [env]]
     [auth-example.middleware :refer [wrap-defaults]]
-    [auth-example.routes :refer [router]]
+    [auth-example.routes :refer [handler]]
     [macchiato.server :as http]
     [macchiato.session.memory :as mem]
     [mount.core :as mount :refer [defstate]]
@@ -13,7 +13,7 @@
   (let [host (or (:host @env) "127.0.0.1")
         port (or (some-> @env :port js/parseInt) 3000)]
     (http/start
-      {:handler    (wrap-defaults router)
+      {:handler    (wrap-defaults handler)
        :host       host
        :port       port
        :on-success #(info "auth-example started on" host ":" port)})))
