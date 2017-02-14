@@ -10,45 +10,49 @@
 (defn logged-in? [{:keys [identity]}]
   (boolean identity))
 
-(defn login-form []
-  [:div
-   [:h3 "Please login"]
-   [:form
-    {:method "POST"
-     :action "/session"}
-    [:input
-     {:type  :hidden
-      :name  "__anti-forgery-token"
-      :value af/*anti-forgery-token*}]
-    [:input
-     {:type        :text
-      :name        "name"
-      :placeholder "name"}]
-    [:input
-     {:type        :text
-      :name        "pass"
-      :placeholder "password"}]
-    [:input
-     {:type  :submit
-      :value "login"}]]])
+(defn login-form [ctx]
+  (let [request-for (::router/request-for ctx)
+        req (request-for :create [:session] {})]
+    [:div
+     [:h3 "Please login"]
+     [:form
+      {:method (:request-method req)
+       :action (:uri req)}
+      [:input
+       {:type  :hidden
+        :name  "__anti-forgery-token"
+        :value af/*anti-forgery-token*}]
+      [:input
+       {:type        :text
+        :name        "name"
+        :placeholder "name"}]
+      [:input
+       {:type        :text
+        :name        "pass"
+        :placeholder "password"}]
+      [:input
+       {:type  :submit
+        :value "login"}]]]))
 
-(defn logout-form [{:keys [identity]}]
-  [:div
-   [:h3 "Welcome " (:name identity)]
-   [:form
-    {:method "POST"
-     :action "/session"}
-    [:input
-     {:type  :hidden
-      :name  "__anti-forgery-token"
-      :value af/*anti-forgery-token*}]
-    [:input
-     {:type  :hidden
-      :name  "_method"
-      :value "delete"}]
-    [:input
-     {:type  :submit
-      :value "logout"}]]])
+(defn logout-form [{:keys [identity], :as ctx}]
+  (let [request-for (::router/request-for ctx)
+        req (request-for :destroy [:session] {})]
+    [:div
+     [:h3 "Welcome " (:name identity)]
+     [:form
+      {:method "POST"
+       :action (:uri req)}
+      [:input
+       {:type  :hidden
+        :name  "__anti-forgery-token"
+        :value af/*anti-forgery-token*}]
+      [:input
+       {:type  :hidden
+        :name  "_method"
+        :value (:request-method req)}]
+      [:input
+       {:type  :submit
+        :value "logout"}]]]))
 
 (defn home-view [ctx]
   (html
@@ -56,7 +60,7 @@
     [:body
      (if (logged-in? ctx)
        (logout-form ctx)
-       (login-form))]]))
+       (login-form ctx))]]))
 
 (def home-controller
   {:show (fn [req res raise]
