@@ -81,7 +81,7 @@
                   (res)))})
 
 (def routes
-  (router/composite
+  (router/group
    (router/resource :home home-controller, :segment false)
    (router/resource :session session-controller)))
 
