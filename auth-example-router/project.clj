@@ -1,7 +1,7 @@
 (defproject auth-example "0.1.0-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
-  :dependencies [[darkleaf/router "0.2.1"]
+  :dependencies [[darkleaf/router "0.3.1"]
                  [com.taoensso/timbre "4.8.0"]
                  [hiccups "0.3.0"]
                  [macchiato/auth "0.0.1"]
