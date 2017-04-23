@@ -72,16 +72,16 @@
     raise))
 
 (def routes
-  ["/" {""         {:get (fn [_ res _] (res (r/ok "Hello, World!")))}
-        "plain"    {:get plaintext}
-        "json"     {:get json-serialization}
-        "db"       {:get single-query-test}
-        "fortunes" {:get fortunes-test}
+  ["/" {""          {:get (fn [_ res _] (res (r/ok "Hello, World!")))}
+        "plaintext" {:get plaintext}
+        "json"      {:get json-serialization}
+        "db"        {:get single-query-test}
+        "fortunes"  {:get fortunes-test}
         "queries"
-                   {"/"            {:get single-query-test}
-                    ["/" :queries] {:get queries-test}}
-        "updates" {"/"            {:get update-test}
-                    ["/" :queries] {:get update-test}}}])
+                    { "/"            {:get single-query-test}
+                     ["/" :queries] {:get queries-test}}
+        "updates"   {"/"            {:get update-test}
+                     ["/" :queries] {:get update-test}}}])
 
 (defn router [req res raise]
   (if-let [{:keys [handler route-params]} (bidi/match-route* routes (:uri req) req)]
