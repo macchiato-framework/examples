@@ -20,7 +20,7 @@
 (defn json-serialization
   "Test 1: JSON serialization"
   [_ res _]
-  (-> (clj->js {:message "Hello, World!"})
+  (-> (js/JSON.stringify #js {:message "Hello, World!"})
       (r/ok)
       (r/content-type "application/json")
       (res)))
@@ -38,16 +38,22 @@
          (res))
     raise))
 
+(defn escape-html [s]
+  (st/escape s
+             {"&"  "&amp;"
+              ">"  "&gt;"
+              "<"  "&lt;"
+              "\"" "&quot;"}))
+
 (defn fortunes-test [req res raise]
   (db/get-fortunes
     #(-> (html
            [:html
             [:body
-             (into
-               [:table
-                [:tr [:th "id"] [:th "message"]]]
-               (for [message %]
-                 [:tr [:td (:id message)] [:td (:message message)]]))]])
+             [:table
+              [:tr [:th "id"] [:th "message"]]
+              (for [message %]
+                [:tr [:td (:id message)] [:td (-> message :message escape-html)]])]]])
          (r/ok)
          (r/content-type "text/html")
          (res))
