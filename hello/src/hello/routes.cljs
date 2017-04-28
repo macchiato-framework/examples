@@ -1,6 +1,7 @@
 (ns hello.routes
   (:require
     [bidi.bidi :as bidi]
+    [clojure.string :as st]
     [hello.db :as db]
     [hiccups.runtime]
     [macchiato.util.response :as r])
@@ -49,13 +50,14 @@
   (db/get-fortunes
     #(-> (html
            [:html
+            [:head [:title "Fortunes"]]
             [:body
              [:table
               [:tr [:th "id"] [:th "message"]]
               (for [message %]
                 [:tr [:td (:id message)] [:td (-> message :message escape-html)]])]]])
          (r/ok)
-         (r/content-type "text/html")
+         (r/content-type "text/html;charset=utf-8")
          (res))
     raise))
 
@@ -64,7 +66,7 @@
     (or (-> req :route-params :queries) 1)
     #(-> (js/JSON.stringify %)
          (r/ok)
-         (r/content-type "text/plain")
+         (r/content-type "application/json")
          (res))
     raise))
 
@@ -73,7 +75,7 @@
     (or (-> req :route-params :queries) 1)
     #(-> (js/JSON.stringify %)
          (r/ok)
-         (r/content-type "text/plain")
+         (r/content-type "application/json")
          (res))
     raise))
 
@@ -84,7 +86,7 @@
         "db"        {:get single-query-test}
         "fortunes"  {:get fortunes-test}
         "queries"
-                    { "/"            {:get single-query-test}
+                    {"/"            {:get queries-test}
                      ["/" :queries] {:get queries-test}}
         "updates"   {"/"            {:get update-test}
                      ["/" :queries] {:get update-test}}}])
