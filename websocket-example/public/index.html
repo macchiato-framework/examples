@@ -1,0 +1,17 @@
+<html>
+<body>
+<h1>WebSockt Example</h1>
+<p id="message"></p>
+</body>
+<script>
+var ws = new WebSocket("ws://localhost:3000", "http");
+
+ws.onopen = function () {
+    ws.send("Here's some text that the server is urgently awaiting!");
+}
+
+ws.onmessage = function (event) {
+    document.getElementById("message").innerHTML = event.data;
+}
+</script>
+</html>
