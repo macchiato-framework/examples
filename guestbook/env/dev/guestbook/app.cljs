@@ -1,7 +1,7 @@
  (ns ^:figwheel-always guestbook.app
   (:require
     [guestbook.core :as core]
-    [cljs.nodejs]
+    [cljs.nodejs :as node]
     [mount.core :as mount]))
 
 (mount/in-cljc-mode)
@@ -10,4 +10,4 @@
 
 (.on js/process "uncaughtException" #(js/console.error %))
 
-(set! *main-cli-fn* core/app)
+(set! *main-cli-fn* core/server)

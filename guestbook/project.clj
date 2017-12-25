@@ -1,30 +1,35 @@
 (defproject guestbook "0.1.0-SNAPSHOT"
   :description "FIXME: write this!"
   :url "http://example.com/FIXME"
-  :dependencies [[bidi "2.0.14"]
-                 [com.taoensso/timbre "4.7.4"]
-                 [hiccups "0.3.0"]
-                 [macchiato/core "0.1.2"]                 
-                 [macchiato/env "0.0.3"]
-                 [macchiato/sql "0.0.1"]
-                 [mount "0.1.10"]
-                 [org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.293"]]
+  :dependencies [[bidi "2.1.2"]
+                 [com.cemerick/piggieback "0.2.2"]
+                 [com.taoensso/timbre "4.10.0"]
+                 [macchiato/hiccups "0.4.1"]
+                 [macchiato/core "0.2.5"]
+                 [macchiato/env "0.0.6"]
+                 [mount "0.1.11"]
+                 [org.clojure/clojure "1.9.0"]
+                 [org.clojure/clojurescript "1.9.946"]
+                 ;; needed for JDK 9 compatibility
+                 [javax.xml.bind/jaxb-api "2.3.0"]]
+  :min-lein-version "2.0.0"
   :jvm-opts ^:replace ["-Xmx1g" "-server"]
   :plugins [[lein-doo "0.1.7"]
-            [lein-npm "0.6.2"]
-            [lein-figwheel "0.5.8"]
-            [lein-cljsbuild "1.1.4"]
-  [org.clojure/clojurescript "1.9.293"]]
+            [macchiato/lein-npm "0.6.4"]
+            [lein-figwheel "0.5.14"]
+            [lein-cljsbuild "1.1.5"]]
   :npm {:dependencies [[source-map-support "0.4.6"]
-                       [sqlite3 "3.1.8"]
-                       [synchronize "2.0.0"]]}
+                       [sqlite3 "3.1.13"]]
+        :write-package-json true}
   :source-paths ["src" "target/classes"]
   :clean-targets ["target"]
   :target-path "target"
   :profiles
   {:dev
-   {:cljsbuild
+   {:npm {:package {:main "target/out/guestbook.js"
+                    :scripts {:start "node target/out/guestbook.js"}}}
+    :dependencies [[figwheel-sidecar "0.5.14"]]
+    :cljsbuild
     {:builds {:dev
               {:source-paths ["env/dev" "src"]
                :figwheel     true
@@ -41,8 +46,6 @@
      :nrepl-port 7000
      :reload-clj-files {:clj false :cljc true}
      :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
-
-    :dependencies [[com.cemerick/piggieback "0.2.1"]]
     :source-paths ["env/dev"]
     :repl-options {:init-ns user}}
    :test
@@ -51,19 +54,22 @@
      {:test
       {:source-paths ["env/test" "src" "test"]
        :compiler     {:main guestbook.app
-                            :output-to     "target/test/guestbook.js"
-                            :target        :nodejs
-                            :optimizations :none
-                            :source-map    true
-                            :pretty-print  true}}}}
+                      :output-to     "target/test/guestbook.js"
+                      :target        :nodejs
+                      :optimizations :none
+                      :pretty-print  true
+                      :source-map    true}}}}
     :doo {:build "test"}}
    :release
-   {:cljsbuild
+   {:npm {:package {:main "target/release/guestbook.js"
+                    :scripts {:start "node target/release/guestbook.js"}}}
+    :cljsbuild
     {:builds
      {:release
       {:source-paths ["env/prod" "src"]
        :compiler     {:main          guestbook.app
                       :output-to     "target/release/guestbook.js"
+                      :language-in   :ecmascript5
                       :target        :nodejs
                       :optimizations :simple
                       :pretty-print  false}}}}}}
@@ -75,7 +81,7 @@
    "package" ["do"
               ["clean"]
               ["npm" "install"]
-              ["npm" "init" "-y"]
+              ["with-profile" "release" "npm" "init" "-y"]
               ["with-profile" "release" "cljsbuild" "once"]]
    "test" ["do"
            ["npm" "install"]

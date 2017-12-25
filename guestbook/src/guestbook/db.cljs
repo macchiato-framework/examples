@@ -3,8 +3,6 @@
     [cljs.nodejs :as node]
     [mount.core :refer [defstate]]))
 
-(def sync (node/require "synchronize"))
-
 (def sqlite3 (node/require "sqlite3"))
 
 (defstate db
@@ -21,8 +19,5 @@
 (defn add-message [{:keys [name message]}]
   (.run @db "INSERT INTO guestbook (name, message) VALUES (?, ?)" #js [name message]))
 
-(defn messages []
-  (-> @db
-      (.all "SELECT * FROM guestbook" (sync.defer))
-      (sync.await)
-      (js->clj :keywordize-keys true)))
+(defn messages [handler]
+  (.all @db "SELECT * FROM guestbook" handler))
