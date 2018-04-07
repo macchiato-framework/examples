@@ -5,11 +5,11 @@
                  [com.cemerick/piggieback "0.2.2"]
                  [com.taoensso/timbre "4.10.0"]
                  [macchiato/hiccups "0.4.1"]
-                 [macchiato/core "0.2.6"]
+                 [macchiato/core "0.2.11"]
                  [macchiato/env "0.0.6"]
-                 [mount "0.1.11"]
+                 [mount "0.1.12"]
                  [org.clojure/clojure "1.9.0"]
-                 [org.clojure/clojurescript "1.9.946"]
+                 [org.clojure/clojurescript "1.10.238"]
                  ;; needed for JDK 9 compatibility
                  [javax.xml.bind/jaxb-api "2.3.0"]]
   :min-lein-version "2.0.0"
